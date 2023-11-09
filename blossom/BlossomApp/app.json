@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "BlossomApp",
+    "slug": "blossom-app",
+    "orientation": "portrait",
+    "androidStatusBarColor": "#ffffff",
+    "androidStatusBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#ffffff"
+    },
+    "icon": "./blossom_logo.png",
+    "extra": {
+      "eas": {
+        "projectId": "99835e29-59cc-4def-bb56-32291a8e8d90"
+      }
+    },
+    "updates": {},
+    "android": {},
+    "ios": {},
+    "description": "React Native app for interfacing with Blossom robot. Currently using a wrapper called Expo for easier deployment on iOS and android. However, this limits us to only using the Expo API, so no native coding or open-source solutions unless we eject from Expo."
+  }
+}

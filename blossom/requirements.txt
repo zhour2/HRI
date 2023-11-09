@@ -1,0 +1,9 @@
+pypot
+flask>=2.2.2
+gcloud
+sseclient
+requests_toolbelt
+python_jwt
+pycrypto
+prettytable
+flask_cors
