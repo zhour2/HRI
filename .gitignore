@@ -1,3 +1,6 @@
 .DS_Store
 blossom_venv
 blossom_venv/*
+HGR/node_modules/*
+HGR/*.json
+*.jpg

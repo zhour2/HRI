@@ -1,146 +1,103 @@
 MyOpenHMI
 *This is my work based on the openHMI*
+
 **Author: Richard Zhou**
+
 **Email: zhour2@rose-hulman.edu**
 
-# 0 Setup & Initial Configuration
+# 1. Raspberry Pi Setup
+## 1.1 Make System Image with Raspberry Pi Imager.
++ Raspberry Pi Imager can be downloaded via: https://www.raspberrypi.com/software/
 
-## 0.1 SW Environment Setup
+![](https://raw.githubusercontent.com/CNlaochen/PicGo/main/rpiImagerDownload.png)
 
-### 0.1.1 Install pip3
++ Insert SD card onto the PC and launch Raspberry Pi Imager.
++ Choose OS as "**Raspberry Pi OS (64bit)**"
+![](https://raw.githubusercontent.com/CNlaochen/PicGo/main/selectOS.png)
++ Then choose storage (***Not necessarily a large SD card, 16GB is enough***)
+![](https://raw.githubusercontent.com/CNlaochen/PicGo/main/selectStorage.png)
++ Click "**WRITE**" to launch the image download and write process. The images will firstly download the image, then write to SD card and finally check the written binaries. When everything is ok, the SD card is ready to use.
+![](https://raw.githubusercontent.com/CNlaochen/PicGo/main/writeSDDone.png)
+
+## 1.2 Raspberry Pi HW setup
++ Connect Mouse and Keyboard via USB port.
++ Connect U2D2 Adapter via USB port. (Skip this step if you don't have Blossom Robot)
++ Connect Camera via the Camera port on the board. (Skip this step if you don't have Camera) 
++ Connect display monitor via the mini HDMI port (May need a mini HDMI to HDMI adapter if you only have an HDMI cable)
++ Insert the SD card into the SD socket.
++ Connect the power supply via the Type-C port.
+## 1.3 Configure OS and package source repository
++ When the system boots up for the very first time, the it would require user to specify some key informations such as user name and password, time, time zone, localization, and keyboard, etc.
++ **For China's users only**. You would most probabaly experience a very slow package downloading due to the network issue. Then you need to configure the package source repo to a mirror located in mainland China. There are several mirrors avaialbe to use. Refers to: https://blog.csdn.net/zifengzwz/article/details/107922635
++ Set the password of root: Open the terminal and then input the following command:
+
+**This step is only needed to executed for the very first time you'd like to run a command with sudo**
 
 ```shell
-sudo apt install python3-pip
+sudo passwd root
 ```
-
-### 0.1.2 Install virtual environment (venv)
-
+Then the system will ask you to input the initial password.
 ```shell
-sudo apt-get install python3-venv
+Enter new UNIX passwoord: 
+Retype new UNIX password:
 ```
+## 1.4 Download the essential SWs
+Open the terminal, and follow the steps.
++ Update the repo
+```shell
+sudo apt-get update
+```
++ Upgrade the installed softwares
+```shell
+sudo apt-get upgrade
+```
+This step would take pretty long time, just wait for the accomplishment.
++ Install all the dependencies
+```shell
+sudo apt-get install build-essential libssl-dev libffi-dev python3-dev xvfb ca-certificates curl gnupg git
+```
+# 2. Fetch the Project
+You can fetch the project either via git or directly copy from shared folder or external storage.
 
-### 0.1.3 Get everything well-prepared
+The structure of the porject source is as follows:
+![](https://raw.githubusercontent.com/CNlaochen/PicGo/main/project_arch.png)
+
++ requirements.txt: This is all the python packages needed in order to run the project.
++ gears_up.sh: This script is launching the python virtual enrivonment.
++ Utility: This folder contains all the utilities needed such as FrameCapture for dataset capturing.
++ EnvTest: This folder contains the test programs to assure the HW is working appropriately.
++ HGR: This folder contains the Hand Gesture Recognition application.
++ blossom: This folder contains all the stuffs for the Robot control.
+
+## 2.1 Launch the Python venv (Need to run every time a new terminal is opened)
 ```shell
 source ./gears_up.sh
 ```
+## 2.2 Install the pythohn dependencies (Only need to execute when the project is initially downloaded)
+** NOTE: For China's Users, due to the network issue, mirror site is suggested to be specified with the following command. Let's take an example of using https://pypi.tuna.tsinghua.edu.cn/simple/
 
-### 0.1.4 General Setup
+The following commands are executed on the top-level of the project.
 
-```shell
-sudo apt-get install build-essential libssl-dev libffi-dev python3-dev xvfb ca-certificates curl gnupg
-pip install wheel
-```
-
-### 0.1.5 Install Requirements
-
++ For non-China's users:
 ```shell
 pip install -r requirements.txt
 ```
-
-**NOTE**: Under some extreme circumstances, there might be inconsistent hashes issue reported so that the installation is blocked.
-
-Try this:
-
-```she
-pip install --no-cache-dir -r requirements.txt
-```
-
-### 0.1.6 Install nodejs
-
-#### Step-1: Download and import the Nodesource GPG key
-
-```sh
-sudo apt-get update
-sudo apt-get install -y ca-certificates curl gnupg
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-```
-
-#### Step-2: Create deb repository
-
-```sh
-NODE_MAJOR=20
-echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
-```
-
-#### Step-3: Run Update and Install
-
-```sh
-sudo apt-get update
-sudo apt-get install nodejs -y
-```
-
-### 0.1.7 Install npm
-
++ For China's users:
 ```shell
-sudo apt install -y npm
-npm -v
-sudo npm install npm -g
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
+
 ```
 
-### 0.1.8 Install expo SDK
-
+# 3. Development
+# 3.1 Test functionality of Camera
+It is strong suggested to test the functionality of the Camera before everying sterts.
+For the convenience of developing, I recommend using VSCode. Make life easier. :)
+You can find VSCode installer via: https://code.visualstudio.com/download
+You need to download the type of .deb (Arm64) if you're using Raspberry Pi 4+.
+If you have decided to use VSCode, you can simply launch the VSCode on the top-level of the project.
 ```shell
-npx expo install
+code .
 ```
-
-## 0.2 U2D2 Configuration
-
-### 0.2.1 Connect U2D2 to Raspberry Pi
-
-### 0.2.2 Configure the latency
-
-```shell
-cat /sys/bus/usb-serial/devicees/ttyUSB0/latency_timer
-16
-echo 1 > /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
-cat /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
-1
-```
-
-## USING EAS INSTEAD OF EXPO
-
-using eas instead of expo since expo is deprecated.
-
-### Install eas-cli
-
-```sh
-sudo npm install -g eas-cli
-```
-
-### Start eas-cli
-
-```sh
-npx eas-cli
-```
-
-
-
-
-
-# 1 Build
-
-## 1.1 APP Build and Publish
-
-### 1.1.1 Expo Login
-
-```shell
-npx expo login
-```
-
-Input the user name and password when they're required.
-
-
-
-### 1.1.1 IOS
-
-1. Download Expo App.
-
-2. Create an Expo account
-
-3. Publish the APP
-
-   ```she
-   cd ./BlossomApp
-   expo publish
-   ```
+Then you can check the running environment is already set as python-venv on the bottom-right corner of the VSCode.
+In order to test the functionality of the Camera, you need to run <myopenhmi>/EnvTest/test_camera_v2.py.
+This program test to preview the camera in 3 modes, in which it last 5 seconds. If no error pops up and you can see the preview window, camera is ok.
